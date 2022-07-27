@@ -1,1 +1,57 @@
 #put your code here
+
+#Wael's code
+# __________________________________________________________________________________________________________________________________ 
+import numpy as np
+import cv2 as cv
+from PIL import Image
+from cv2 import threshold
+from cv2 import imwrite
+from numpy import uint, uint8
+import numpy
+
+
+#function to reduce noise - YES -
+def noise_reducer(image):
+    import numpy #numerical data lib
+    kernel= numpy.ones((1,1), numpy.uint8) 
+    image=cv.dilate(image,kernel,iterations=1)
+    kernel= numpy.ones((1,1), numpy.uint8)
+    image=cv.erode(image,kernel,iterations=1)
+    image=cv.morphologyEx(image,cv.MORPH_CLOSE,kernel)
+    image=cv.medianBlur(image, 3)
+    return (image)
+    
+def thin_font(image):
+    import numpy as np
+    image=cv.bitwise_not(image)
+    kernel=np.ones((2,2), np.uint8)
+    image= cv.erode(image,kernel,iterations=1)
+    image=cv.bitwise_not(image)
+    return (image)
+
+image=cv.imread('least_quality.jpg')
+image=cv.resize(image, (0, 0), fx =20 , fy = 20)
+inverted_image=cv.bitwise_not(image) #additional step
+
+gray_image=cv.cvtColor(image,cv.COLOR_BGR2GRAY)   #converting the image color to gray - YES -
+
+thres,mono_image=threshold(gray_image,210,253,cv.THRESH_BINARY) #adjusting the threshold - YES -
+no_noise_image=noise_reducer(mono_image) # - YES -
+
+eroded_image=thin_font(no_noise_image) # - YES -
+
+#creating a sharpness filter
+sharpening_filter= np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])
+
+#applyging the kernel (input) 
+
+final_result=cv.filter2D(eroded_image,-1,sharpening_filter)
+final_result=cv.resize(final_result, (0, 0), fx =0.05 , fy =0.05 )
+imwrite('frm.png',final_result) 
+
+
+cv.waitKey(0)
+# __________________________________________________________________________________________________________________________________
+
+
