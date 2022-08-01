@@ -99,7 +99,7 @@ def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,
     sharp_img=cv.filter2D(image,-1,sharpening_filter)
     return sharp_img
 
-def whole_filter(image): #Function to pack up all the sub-functions as a complete enhacing filter
+def full_filter(image): #Function to pack up all the sub-functions as a complete enhacing filter
     
     image=dynamic_resize(image) 
 
