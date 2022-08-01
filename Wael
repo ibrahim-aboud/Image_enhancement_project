@@ -75,3 +75,47 @@ def dynamic_resize(image,static=0,height_portrait=8465,height_landscape=8465):
         n=static
     # applying the resizing function
     return cv.resize(image, (0, 0), n , n)
+    
+    
+  #function to convert a coloured image to a gray image 
+def gray_image_cv(image): 
+    return cv.cvtColor(image,cv.COLOR_BGR2GRAY)
+    
+ 
+ 
+  #thresholding function : this function makes a large diffrence in the image quality using black/white_factor,the larger white/black factor value --> the clearer      
+  #black/white pixel i.e: if black_factor=200 --> the characters will be more filled with balck pixels --> same thing with the white_factor.
+  #we recommend using : black_factor 150-210 , white_factor 230-250 .
+  
+def thresholded_img(image,black_factor=202,white_factor=253):
+    thres,mono_image=threshold(image,black_factor,white_factor,cv.THRESH_BINARY) #adjusting the threshold
+    return (thres,mono_image)
+    
+    
+  # sharpening function : there are no parameteres to manipulate, we recommend using it as it is .
+def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])):
+    sharp_img=cv.filter2D(image,-1,sharpening_filter)
+    return sharp_img
+
+
+
+image=dynamic_resize(image) 
+
+gray_image=gray_image_cv(image)   #converting the image color to gray - YES -
+
+mono_image=thresholded_img(gray_image)
+no_noise_image=noise_reducer_cv(mono_image) 
+
+eroded_image=thin_font_cv(no_noise_image) 
+
+final_result=sharpened_img(eroded_image)
+
+
+
+resized_result = cv.resize(final_result,(0, 0), fx=0.33, fy=0.33)
+
+imwrite('final_result.png',final_result) 
+
+
+cv.waitKey(0)
+
