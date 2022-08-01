@@ -1,6 +1,7 @@
 
 #Wael's code
 # __________________________________________________________________________________________________________________________________ 
+from cv2 import imshow
 import numpy as np
 import cv2 as cv
 from PIL import Image
@@ -25,20 +26,19 @@ def thin_font(image):
     import numpy as np
     image=cv.bitwise_not(image)
     kernel=np.ones((2,2), np.uint8)
-    image= cv.erode(image,kernel,iterations=4)
+    image= cv.erode(image,kernel,iterations=1)
     image=cv.bitwise_not(image)
     return (image)
 
-image=cv.imread('images/1_avant.jpg')
-image_s=Image.open('images/1_avant.jpg')
-(x,y)=image_s.size
-image=cv.resize(image, (0, 0), fx =12 , fy = 12)
+image=cv.imread('least_quality.jpg')
+height=image.shape[0]
+n=5904/height
+image=cv.resize(image, (0, 0), fx =n , fy =n )
 inverted_image=cv.bitwise_not(image) #additional step
 
 gray_image=cv.cvtColor(image,cv.COLOR_BGR2GRAY)   #converting the image color to gray - YES -
 
-thres,mono_image=threshold(gray_image,155,220,cv.THRESH_BINARY) #adjusting the threshold - YES -
-
+thres,mono_image=threshold(gray_image,202,253,cv.THRESH_BINARY) #adjusting the threshold - YES -
 no_noise_image=noise_reducer(mono_image) # - YES -
 
 eroded_image=thin_font(no_noise_image) # - YES -
@@ -47,66 +47,9 @@ eroded_image=thin_font(no_noise_image) # - YES -
 sharpening_filter= np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])
 
 #applyging the kernel (input) 
-final_result=cv.filter2D(eroded_image,-1,sharpening_filter)
 
-imwrite('frm.png',final_result) 
+final_result=cv.filter2D(eroded_image,-1,sharpening_filter)
+imwrite('final_result.png',final_result) 
 
 
 cv.waitKey(0)
-# __________________________________________________________________________________________________________________________________
-
-#run this block to import libraries and build functions 
-import matplotlib.pyplot as plt
-import glob
-#import OpenCV
-#import cv2
-
-#All the function builded
-
-from PIL import Image, ImageEnhance, ImageFilter
-
-#function that resizes an image while keeping its ratio
-def resize_img(img,factor): # factor=1 : same size / factor > 1 : bigger size / 0 < factor < 1 : smaller image
-    (x,y)=img.size
-    return img.resize((int(factor*x),int(factor*y)))
-
-#function that modifies an image's brightness
-def brighten_img(img,factor): # factor=1 : same image / factor > 1 : brighter image / 0 < factor < 1 : dimmer image
-    enhancer = ImageEnhance.Brightness(img)
-    im_output = enhancer.enhance(factor)
-    return im_output
-
-#function that changes an images contrast
-def contrast_img(img,factor): # factor=1 : same image / factor > 1 : more contrast / 0 < factor < 1 : less contrast
-    Enhancer = ImageEnhance.Contrast(img)
-    im_output = Enhancer.enhance(factor)
-    return im_output
-
-#function that sharpens an image
-def sharpen_img(img,level=1): #it is either applied or not ( factor > 0 means yes we can apply it)
-        if level <= 0:
-            return img
-        else:
-            return img.filter(ImageFilter.SHARPEN)
- 
-#function that combines the last 3 aspects
-def full_filter(img,bright_fact,contrast_fact,sharpness_fact=1,iterate=1): #sharpness fact is not really fact but more like num, i.e: how many times do you want to apply sharpness (which means logically that it should be less or equal to iterate)
-    if int(iterate) > 1: # recursive call of the same function but with subtracting 1 from both iterate and sharpness_fact
-        return full_filter(sharpen_img(contrast_img(brighten_img(img,bright_fact),contrast_fact),sharpness_fact),bright_fact,contrast_fact,sharpness_fact-1,iterate - 1)
-    else:
-        return sharpen_img(contrast_img(brighten_img(img,bright_fact),contrast_fact),sharpness_fact)
-
-
-#process of detecting image quality ( blurry or not blurry )
-# import the necessary packages
-from imutils import paths
-import cv2
-def variance_of_laplacian(image):
-	# compute the Laplacian of the image and then return the focus
-	# measure, which is simply the variance of the Laplacian
-	return cv2.Laplacian(image, cv2.CV_64F).var()
-
-image = cv2.imread("images/pic_big.jpg")
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-fm = variance_of_laplacian(gray)
-print("a blurry image :",round(fm))
