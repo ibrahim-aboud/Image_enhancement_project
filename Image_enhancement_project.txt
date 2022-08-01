@@ -92,7 +92,7 @@ def thresholded_img(image,threshold_value=202):
     """thresholded_img(...)
     
             thresholding function, the most important in this image processing class, 
-            it transform grayscale images into binary ones ( contains pixels with exactly two colors, in this case black and white)
+            it transforms grayscale images into binary ones ( contains pixels with exactly two colors, in this case black and white)
             which is very useful to increase OCR accuracy.
             recommended (effective) on images with less noise
             
@@ -102,7 +102,7 @@ def thresholded_img(image,threshold_value=202):
             default value : 202 , for modification, values between 150 and 210 are recommended
             
             example -> for text images the bigger the value of threshold_value the thicker and more filled the 
-            caractere's will be, the opposite is true
+            caracter's will be, the opposite is true
         """
     thres,mono_image=threshold(image,threshold_value,253,cv.THRESH_BINARY) #adjusting the threshold
     return (thres,mono_image)
