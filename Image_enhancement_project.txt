@@ -116,21 +116,39 @@ def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,
     sharp_img=cv.filter2D(image,-1,sharpening_filter)
     return sharp_img
 
-#Function to pack up all the sub-functions as a complete enhacing filter
-def full_filter(image):
+def full_filter(image,resize=0,gray=True,thresholding=True,denoising=True,eroding=True,sharpening=True):
+    """full_filter(...)
+    
+            a genral image enhancing method that packs up all the methods in the - Enhance - class
+            with parameters chosen by the developers
+                        
+            image: image type ( opened using -cv.imread- function)
+            resize: integer that replaces the -static- parameter in the resizing step
+            (type : help(dynamic_resize) for more detail)
+            gray: boolean that activates the greyscaling step
+            thresholding: boolean that activates the thresholding step
+            denoising: boolean that activates the denoising step
+            eroding: boolean that activates the eroding step
+            sharpening: boolean that activates the sharpening step
+    """
     # adjust the number of pixels if needed
-    image=dynamic_resize(image) 
+    image=dynamic_resize(image,resize) 
     # transform into grayscale 
-    gray_image=gray_image_cv(image)  
+    if gray:
+        image=gray_image_cv(image)  
     # thresholding the image and turning it into a binary image
-    thres,mono_image=thresholded_img(gray_image)
+    if thresholding:
+        thres,mono_image=thresholded_img(image)
     # denoising the image
-    no_noise_image=noise_reducer_cv(mono_image) 
+    if denoising:
+        image=noise_reducer_cv(mono_image) 
     # thinning the caracters
-    eroded_image=thin_font_cv(no_noise_image) 
+    if eroding:
+        image=thin_font_cv(image) 
     # sharpening the result
-    final_result=sharpened_img(eroded_image)
-    return final_result
+    if sharpening:
+        image=sharpened_img(image)
+    return image
     
     
          
