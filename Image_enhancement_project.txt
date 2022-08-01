@@ -116,7 +116,7 @@ def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,
     sharp_img=cv.filter2D(image,-1,sharpening_filter)
     return sharp_img
 
-def full_filter(image,resize=0,resize_to_original=false,gray=True,thresholding=True,denoising=True,eroding=True,sharpening=True):
+def full_filter(image,resize=0,resize_to_original=False,gray=True,thresholding=True,denoising=True,eroding=True,sharpening=True):
     """full_filter(...)
     
             a genral image enhancing method that packs up all the methods in the - Enhance - class
