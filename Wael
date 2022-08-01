@@ -1,3 +1,4 @@
+
 from cv2 import imshow
 import numpy as np
 import cv2 as cv
@@ -17,10 +18,10 @@ def noise_reducer_cv(image,dilate_iteration=1,erode_iteration=1):
             dilate_iteration: integer representing how many interations when calling the - cv.dilate - function, 1 by default
             erode_iteration: integer representing how many interations when calling the - cv.erode - function, 1 by default
     """
-    kernel= np.ones((1,1), numpy.uint8) 
-    image=cv.dilate(image,kernel,dilate_iteration) 
-    kernel= np.ones((1,1), numpy.uint8)
-    image=cv.erode(image,kernel,erode_iteration)
+    kernel= np.ones((1,1), np.uint8) 
+    image=cv.dilate(image,kernel,iterations = dilate_iteration) 
+    kernel= np.ones((1,1), np.uint8)
+    image=cv.erode(image,kernel,iterations = erode_iteration)
     image=cv.morphologyEx(image,cv.MORPH_CLOSE,kernel)
     image=cv.medianBlur(image, 3)
     return (image)
@@ -62,6 +63,7 @@ def dynamic_resize(image,static=0,height_portrait=8465,height_landscape=8465):
     """
     height=image.shape[0]
     width=image.shape[1]
+    image=image
     # case of dynamic resize
     if not static:   
         if height>=width:
@@ -74,7 +76,7 @@ def dynamic_resize(image,static=0,height_portrait=8465,height_landscape=8465):
     else:
         n=static
     # applying the resizing function
-    return cv.resize(image, (0, 0), n , n)
+    return cv.resize(image, (0, 0), fx=n , fy=n )
     
     
   #function to convert a coloured image to a gray image 
@@ -98,12 +100,12 @@ def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,
     return sharp_img
 
 
-
+image=cv.imread('original.jpg')
 image=dynamic_resize(image) 
 
 gray_image=gray_image_cv(image)   #converting the image color to gray - YES -
 
-mono_image=thresholded_img(gray_image)
+thres,mono_image=thresholded_img(gray_image)
 no_noise_image=noise_reducer_cv(mono_image) 
 
 eroded_image=thin_font_cv(no_noise_image) 
@@ -119,3 +121,5 @@ imwrite('final_result.png',final_result)
 
 cv.waitKey(0)
 
+
+ 
