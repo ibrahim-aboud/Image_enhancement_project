@@ -1,4 +1,3 @@
-
 #Wael's code
 # __________________________________________________________________________________________________________________________________ 
 from cv2 import imshow
@@ -12,7 +11,7 @@ import numpy
 
 
 #function to reduce noise - YES -
-def noise_reducer(image):
+def noise_reducer_cv(image):
     import numpy #numerical data lib
     kernel= numpy.ones((1,1), numpy.uint8) 
     image=cv.dilate(image,kernel,iterations=1)
@@ -22,7 +21,7 @@ def noise_reducer(image):
     image=cv.medianBlur(image, 3)
     return (image)
     
-def thin_font(image):
+def thin_font_cv(image):
     import numpy as np
     image=cv.bitwise_not(image)
     kernel=np.ones((2,2), np.uint8)
@@ -30,25 +29,47 @@ def thin_font(image):
     image=cv.bitwise_not(image)
     return (image)
 
-image=cv.imread('least_quality.jpg')
-height=image.shape[0]
-n=5904/height
-image=cv.resize(image, (0, 0), fx =n , fy =n )
-inverted_image=cv.bitwise_not(image) #additional step
+image=cv.imread('page_11.jpg')
 
-gray_image=cv.cvtColor(image,cv.COLOR_BGR2GRAY)   #converting the image color to gray - YES -
+def dynamic_resize(image,height_short=8465,height_long=8465):
+    height=image.shape[0]
+    width=image.shape[1]
+    if height>=width:
+        n=height_short//height
+        print(n)
+    else:
+        n=height_long//height
+    return cv.resize(image, (0, 0), fx =3 , fy =3 )
 
-thres,mono_image=threshold(gray_image,202,253,cv.THRESH_BINARY) #adjusting the threshold - YES -
-no_noise_image=noise_reducer(mono_image) # - YES -
+def gray_image_cv(image):
+    return cv.cvtColor(image,cv.COLOR_BGR2GRAY)
 
-eroded_image=thin_font(no_noise_image) # - YES -
 
-#creating a sharpness filter
-sharpening_filter= np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])
 
-#applyging the kernel (input) 
+image=dynamic_resize(image)
 
-final_result=cv.filter2D(eroded_image,-1,sharpening_filter)
+gray_image=gray_image_cv(image)   #converting the image color to gray - YES -
+
+
+#thresholding
+def thresholded_img(image,black_factor=202,white_factor=253):
+    thres,mono_image=threshold(image,black_factor,white_factor,cv.THRESH_BINARY) #adjusting the threshold
+    return (thres,mono_image)
+
+def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])):
+    sharp_img=cv.filter2D(image,-1,sharpening_filter)
+    return sharp_img
+
+no_noise_image=noise_reducer_cv(mono_image) 
+
+eroded_image=thin_font_cv(no_noise_image) 
+
+final_result=sharpened_img(eroded_image)
+
+
+
+resized_result = cv.resize(final_result,(0, 0), fx=0.33, fy=0.33)
+
 imwrite('final_result.png',final_result) 
 
 
