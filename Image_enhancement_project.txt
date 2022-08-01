@@ -158,3 +158,40 @@ class Enhance:
         return image
     
 cv.waitKey(0)
+
+
+#####################################################################################################
+# part 2: test
+#Testing the class
+#reading an example
+image=cv.imread("paper.jpg")
+
+#resizing
+imwrite("paper_resized.jpg",Enhance.dynamic_resize(image,0.5))
+
+#grayscaling
+imwrite("paper_grayscale.jpg",Enhance.gray_image_cv(image))
+
+#denoising
+imwrite("paper_denoised.jpg",Enhance.noise_reducer_cv(image))
+
+#sharpening
+imwrite("paper_sharpened.jpg",Enhance.sharpened_img(image))
+
+#eroding
+imwrite("paper_thin_font.jpg",Enhance.thin_font_cv(image))
+
+#thresholding
+thesh,img=Enhance.thresholded_img(image)
+imwrite("paper_thresholded.jpg",img)
+
+#applying the full filter
+imwrite("paper_filtered_default.jpg",Enhance.full_filter(image))
+
+#applying the first custom filter
+imwrite("paper_filtered_custom_1.jpg",Enhance.full_filter(image,3))
+
+#applying the second custom filter
+imwrite("paper_filtered_custom_2.jpg",Enhance.full_filter(image,3,True))
+
+#help(Enhance.full_filter)
