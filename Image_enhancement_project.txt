@@ -116,13 +116,15 @@ def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,
     sharp_img=cv.filter2D(image,-1,sharpening_filter)
     return sharp_img
 
-def full_filter(image,resize=0,resize_to_original=0,gray=True,thresholding=True,denoising=True,eroding=True,sharpening=True):
+def full_filter(image,resize=0,resize_to_original=false,gray=True,thresholding=True,denoising=True,eroding=True,sharpening=True):
     """full_filter(...)
     
             a genral image enhancing method that packs up all the methods in the - Enhance - class
             with parameters chosen by the developers
                         
             image: image type ( opened using -cv.imread- function)
+            resize_to_original: boolean that activates the resizing to original step
+            ( if resize_to_original is True , the inverse of -resize- will be used as a factor of resizing )
             resize: integer that replaces the -static- parameter in the resizing step
             (type : help(dynamic_resize) for more detail)
             gray: boolean that activates the greyscaling step
@@ -130,8 +132,7 @@ def full_filter(image,resize=0,resize_to_original=0,gray=True,thresholding=True,
             denoising: boolean that activates the denoising step
             eroding: boolean that activates the eroding step
             sharpening: boolean that activates the sharpening step
-            resize_to_original: boolean/integer that activates the resizing to original step
-            ( if resize_to_original <> 0, it's value will be used as a factor of resizing )
+            
     """
     # adjust the number of pixels if needed
     image=dynamic_resize(image,resize) 
@@ -152,7 +153,7 @@ def full_filter(image,resize=0,resize_to_original=0,gray=True,thresholding=True,
         image=sharpened_img(image)
     #resizing back
     if resize_to_original and not resize:
-        image=dynamic_resize(image,resize_to_original)
+        image=dynamic_resize(image,1/resize)
     
     return image
     
