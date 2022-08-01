@@ -1,7 +1,4 @@
-#put your code here
-
-#Wael's code
-# __________________________________________________________________________________________________________________________________ 
+from cv2 import imshow
 import numpy as np
 import cv2 as cv
 from PIL import Image
@@ -11,47 +8,70 @@ from numpy import uint, uint8
 import numpy
 
 
-#function to reduce noise - YES -
-def noise_reducer(image):
-    import numpy #numerical data lib
-    kernel= numpy.ones((1,1), numpy.uint8) 
-    image=cv.dilate(image,kernel,iterations=1)
-    kernel= numpy.ones((1,1), numpy.uint8)
-    image=cv.erode(image,kernel,iterations=1)
+
+def noise_reducer_cv(image,dilate_iteration=1,erode_iteration=1):
+    """noise_reducer_cv(...)
+            
+            reduces noise in a given image
+            image: image type ( opened using the OpenCV's - cv.imread - function ) contains potential noise that should be removed
+            dilate_iteration: integer representing how many interations when calling the - cv.dilate - function, 1 by default
+            erode_iteration: integer representing how many interations when calling the - cv.erode - function, 1 by default
+    """
+    kernel= np.ones((1,1), numpy.uint8) 
+    image=cv.dilate(image,kernel,dilate_iteration) 
+    kernel= np.ones((1,1), numpy.uint8)
+    image=cv.erode(image,kernel,erode_iteration)
     image=cv.morphologyEx(image,cv.MORPH_CLOSE,kernel)
     image=cv.medianBlur(image, 3)
     return (image)
     
-def thin_font(image):
+def thin_font_cv(image):
+    """thin_font_cv(...)
+        
+            uses the OpenCV's - cv.erode - function inorder to make text in an image thinner
+            image: image type ( opened using -cv.imread - function ) 
+    """
     import numpy as np
     image=cv.bitwise_not(image)
     kernel=np.ones((2,2), np.uint8)
     image= cv.erode(image,kernel,iterations=1)
     image=cv.bitwise_not(image)
     return (image)
-
-image=cv.imread('least_quality.jpg')
-image=cv.resize(image, (0, 0), fx =20 , fy = 20)
-inverted_image=cv.bitwise_not(image) #additional step
-
-gray_image=cv.cvtColor(image,cv.COLOR_BGR2GRAY)   #converting the image color to gray - YES -
-
-thres,mono_image=threshold(gray_image,210,253,cv.THRESH_BINARY) #adjusting the threshold - YES -
-no_noise_image=noise_reducer(mono_image) # - YES -
-
-eroded_image=thin_font(no_noise_image) # - YES -
-
-#creating a sharpness filter
-sharpening_filter= np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])
-
-#applyging the kernel (input) 
-
-final_result=cv.filter2D(eroded_image,-1,sharpening_filter)
-final_result=cv.resize(final_result, (0, 0), fx =0.05 , fy =0.05 )
-imwrite('frm.png',final_result) 
-
-
-cv.waitKey(0)
-# __________________________________________________________________________________________________________________________________
-
-
+    
+def dynamic_resize(image,static=0,height_portrait=8465,height_landscape=8465):
+    """dynamic_resize(...)
+    
+             does a complex resizing operation using OpenCV's - cv.resize - function
+             the concept is the following: inorder to apply certain filters on a given image, 
+             the image must contain at least a - well chosen - number of pixels, because 
+             if that number was too low, the outcome of the filter applied on to the image 
+             would not be as expected, so we need to increase the number of pixels,
+             and that is by resizing it ( upscaling it ), at the same time we do not want the 
+             image to get too big, so that it can be processed faster, and then we won't end 
+             up having huge files.
+              
+             the desired number of pixels is defined by the height of the image with the desired size
+             
+             image: image type ( opened using -cv.imread - function ) 
+             static: positive integer, by default at 0 if we want dynamic_resize, different from 0 if want 
+             to force all the images to be resize (upscaled), - static- would then present the resizing factor
+             height_portrait: the best height to compare with when having portrait images, by 
+             default is 8465, for newspaper pages
+             height_landscape: the best height to compare with when having portrait images, by 
+             default is 8465, for newspaper pages
+    """
+    height=image.shape[0]
+    width=image.shape[1]
+    # case of dynamic resize
+    if not static:   
+        if height>=width:
+            #the analysed image is in portrait
+            n=height_portrait//height
+        else:   
+            #the analysed image is in landscape
+            n=height_landscape//height
+    # case of static resize
+    else:
+        n=static
+    # applying the resizing function
+    return cv.resize(image, (0, 0), n , n)
