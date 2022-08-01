@@ -63,6 +63,7 @@ def dynamic_resize(image,static=0,height_portrait=8465,height_landscape=8465):
     """
     height=image.shape[0]
     width=image.shape[1]
+   
     # case of dynamic resize
     if not static:   
         if height>=width:
@@ -98,20 +99,44 @@ def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,
     sharp_img=cv.filter2D(image,-1,sharpening_filter)
     return sharp_img
 
+def whole_filter(image): #Function to pack up all the sub-functions as a complete enhacing filter
+    
+    image=dynamic_resize(image) 
 
-image=cv.imread('original.jpg')
+    gray_image=gray_image_cv(image)  
+
+    thres,mono_image=thresholded_img(gray_image)
+
+    no_noise_image=noise_reducer_cv(mono_image) 
+
+    eroded_image=thin_font_cv(no_noise_image) 
+
+    final_result=sharpened_img(eroded_image)
+
+    resized_result = cv.resize(final_result,(0, 0), fx=0.33, fy=0.33)
+    
+    imwrite('final_result.png',final_result)     
+
+image=cv.imread('original.jpg') #Uploading the image to the memory
+
 image=dynamic_resize(image) 
 
-gray_image=gray_image_cv(image)   #converting the image color to gray - YES -
+gray_image=gray_image_cv(image)   
 
 thres,mono_image=thresholded_img(gray_image)
+
 no_noise_image=noise_reducer_cv(mono_image) 
 
 eroded_image=thin_font_cv(no_noise_image) 
 
 final_result=sharpened_img(eroded_image)
 
+resized_result = cv.resize(final_result,(0, 0), fx=0.33, fy=0.33)
+
 imwrite('final_result.png',final_result) 
+
+
+
 
 
 cv.waitKey(0)
