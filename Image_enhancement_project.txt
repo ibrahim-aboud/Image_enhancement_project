@@ -40,37 +40,3 @@ def dynamic_resize(image,height_short=8465,height_long=8465):
     else:
         n=height_long//height
     return cv.resize(image, (0, 0), fx =3 , fy =3 )
-
-def gray_image_cv(image):
-    return cv.cvtColor(image,cv.COLOR_BGR2GRAY)
-
-
-
-image=dynamic_resize(image)
-
-gray_image=gray_image_cv(image)   #converting the image color to gray - YES -
-
-
-#thresholding
-def thresholded_img(image,black_factor=202,white_factor=253):
-    thres,mono_image=threshold(image,black_factor,white_factor,cv.THRESH_BINARY) #adjusting the threshold
-    return (thres,mono_image)
-
-def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])):
-    sharp_img=cv.filter2D(image,-1,sharpening_filter)
-    return sharp_img
-
-no_noise_image=noise_reducer_cv(mono_image) 
-
-eroded_image=thin_font_cv(no_noise_image) 
-
-final_result=sharpened_img(eroded_image)
-
-
-
-resized_result = cv.resize(final_result,(0, 0), fx=0.33, fy=0.33)
-
-imwrite('final_result.png',final_result) 
-
-
-cv.waitKey(0)
