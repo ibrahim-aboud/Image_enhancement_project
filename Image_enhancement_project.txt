@@ -8,166 +8,153 @@ from numpy import uint, uint8
 import numpy
 
 
+class Enhance:
+    @staticmethod
+    def noise_reducer_cv(image,dilate_iteration=1,erode_iteration=1):
+        """noise_reducer_cv(...)
 
-def noise_reducer_cv(image,dilate_iteration=1,erode_iteration=1):
-    """noise_reducer_cv(...)
-            
-            reduces noise in a given image
-            image: image type ( opened using the OpenCV's - cv.imread - function ) contains potential noise that should be removed
-            dilate_iteration: integer representing how many interations when calling the - cv.dilate - function, 1 by default
-            erode_iteration: integer representing how many interations when calling the - cv.erode - function, 1 by default
-    """
-    kernel= np.ones((1,1), np.uint8) 
-    image=cv.dilate(image,kernel,iterations = dilate_iteration) 
-    kernel= np.ones((1,1), np.uint8)
-    image=cv.erode(image,kernel,iterations = erode_iteration)
-    image=cv.morphologyEx(image,cv.MORPH_CLOSE,kernel)
-    image=cv.medianBlur(image, 3)
-    return (image)
-    
-def thin_font_cv(image):
-    """thin_font_cv(...)
-        
-            uses the OpenCV's - cv.erode - function inorder to make text in an image thinner
-            image: image type ( opened using -cv.imread - function ) 
-    """
-    import numpy as np
-    image=cv.bitwise_not(image)
-    kernel=np.ones((2,2), np.uint8)
-    image= cv.erode(image,kernel,iterations=1)
-    image=cv.bitwise_not(image)
-    return (image)
-    
-def dynamic_resize(image,static=0,height_portrait=8465,height_landscape=8465):
-    """dynamic_resize(...)
-    
-             does a complex resizing operation using OpenCV's - cv.resize - function
-             the concept is the following: inorder to apply certain filters on a given image, 
-             the image must contain at least a - well chosen - number of pixels, because 
-             if that number was too low, the outcome of the filter applied on to the image 
-             would not be as expected, so we need to increase the number of pixels,
-             and that is by resizing it ( upscaling it ), at the same time we do not want the 
-             image to get too big, so that it can be processed faster, and then we won't end 
-             up having huge files.
-              
-             the desired number of pixels is defined by the height of the image with the desired size
-             
-             image: image type ( opened using -cv.imread - function ) 
-             static: positive integer, by default at 0 if we want dynamic_resize, different from 0 if want 
-             to force all the images to be resize (upscaled), - static- would then present the resizing factor
-             height_portrait: the best height to compare with when having portrait images, by 
-             default is 8465, for newspaper pages
-             height_landscape: the best height to compare with when having portrait images, by 
-             default is 8465, for newspaper pages
-    """
-    height=image.shape[0]
-    width=image.shape[1]
-   
-    # case of dynamic resize
-    if not static:   
-        if height>=width:
-            #the analysed image is in portrait
-            n=height_portrait//height
-        else:   
-            #the analysed image is in landscape
-            n=height_landscape//height
-    # case of static resize
-    else:
-        n=static
-    # applying the resizing function
-    return cv.resize(image, (0, 0), fx=n , fy=n )
-    
-    
-  #function to convert a coloured image to a gray image 
-def gray_image_cv(image): 
-    """gray_image_cv(...)
-    
-            function to convert a coloured image to a gray image 
-            
-            image: image type ( opened using -cv.imread - function )
-    """
-    return cv.cvtColor(image,cv.COLOR_BGR2GRAY)
-
-def thresholded_img(image,threshold_value=202):
-    """thresholded_img(...)
-    
-            thresholding function, the most important in this image processing class, 
-            it transforms grayscale images into binary ones ( contains pixels with exactly two colors, in this case black and white)
-            which is very useful to increase OCR accuracy.
-            recommended (effective) on images with less noise
-            
-            image: image type ( opened using -cv.imread - function )
-            threshold_value: integer: hex color value (between 0 and 255) that sparates pixels that will turn into white ones from those
-            that will turn into black ones, the selection of the value of - threshold_value - will affect how the result will look like
-            default value : 202 , for modification, values between 150 and 210 are recommended
-            
-            example -> for text images the bigger the value of threshold_value the thicker and more filled the 
-            caracter's will be, the opposite is true
+                reduces noise in a given image
+                image: image type ( opened using the OpenCV's - cv.imread - function ) contains potential noise that should be removed
+                dilate_iteration: integer representing how many interations when calling the - cv.dilate - function, 1 by default
+                erode_iteration: integer representing how many interations when calling the - cv.erode - function, 1 by default
         """
-    thres,mono_image=threshold(image,threshold_value,253,cv.THRESH_BINARY) #adjusting the threshold
-    return (thres,mono_image)
+        kernel= np.ones((1,1), np.uint8) 
+        image=cv.dilate(image,kernel,iterations = dilate_iteration) 
+        kernel= np.ones((1,1), np.uint8)
+        image=cv.erode(image,kernel,iterations = erode_iteration)
+        image=cv.morphologyEx(image,cv.MORPH_CLOSE,kernel)
+        image=cv.medianBlur(image, 3)
+        return (image)
+    @staticmethod
+    def thin_font_cv(image):
+        """thin_font_cv(...)
+
+                uses the OpenCV's - cv.erode - function inorder to make text in an image thinner
+                image: image type ( opened using -cv.imread - function ) 
+        """
+        import numpy as np
+        image=cv.bitwise_not(image)
+        kernel=np.ones((2,2), np.uint8)
+        image= cv.erode(image,kernel,iterations=1)
+        image=cv.bitwise_not(image)
+        return (image)
+    @staticmethod
+    def dynamic_resize(image,static=0,height_portrait=8465,height_landscape=8465):
+        """dynamic_resize(...)
+
+                 does a complex resizing operation using OpenCV's - cv.resize - function
+                 the concept is the following: inorder to apply certain filters on a given image, 
+                 the image must contain at least a - well chosen - number of pixels, because 
+                 if that number was too low, the outcome of the filter applied on to the image 
+                 would not be as expected, so we need to increase the number of pixels,
+                 and that is by resizing it ( upscaling it ), at the same time we do not want the 
+                 image to get too big, so that it can be processed faster, and then we won't end 
+                 up having huge files.
+
+                 the desired number of pixels is defined by the height of the image with the desired size
+
+                 image: image type ( opened using -cv.imread - function ) 
+                 static: positive integer, by default at 0 if we want dynamic_resize, different from 0 if want 
+                 to force all the images to be resize (upscaled), - static- would then present the resizing factor
+                 height_portrait: the best height to compare with when having portrait images, by 
+                 default is 8465, for newspaper pages
+                 height_landscape: the best height to compare with when having portrait images, by 
+                 default is 8465, for newspaper pages
+        """
+        height=image.shape[0]
+        width=image.shape[1]
+        # case of dynamic resize
+        if not static:   
+            if height>=width:
+                #the analysed image is in portrait
+                n=height_portrait//height
+            else:   
+                #the analysed image is in landscape
+                n=height_landscape//height
+        # case of static resize
+        else:
+            n=static
+        # applying the resizing function
+        return cv.resize(image, (0, 0), fx=n , fy=n )
     
-def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])):
-    """sharpened_img(...)
-            adds a sharpening filter to the image
-        image: image type ( opened using -cv.imread - function )
-        
-        we recommend using the default values for the rest of the parameters"""
-    sharp_img=cv.filter2D(image,-1,sharpening_filter)
-    return sharp_img
+    #function to convert a coloured image to a gray image 
+    @staticmethod
+    def gray_image_cv(image): 
+        """gray_image_cv(...)
 
-def full_filter(image,resize=0,resize_to_original=False,gray=True,thresholding=True,denoising=True,eroding=True,sharpening=True):
-    """full_filter(...)
+                function to convert a coloured image to a gray image 
+
+                image: image type ( opened using -cv.imread - function )
+        """
+        return cv.cvtColor(image,cv.COLOR_BGR2GRAY)
+    @staticmethod
+    def thresholded_img(image,threshold_value=202):
+        """thresholded_img(...)
+
+                thresholding function, the most important in this image processing class, 
+                it transforms grayscale images into binary ones ( contains pixels with exactly two colors, in this case black and white)
+                which is very useful to increase OCR accuracy.
+                recommended (effective) on images with less noise
+
+                image: image type ( opened using -cv.imread - function )
+                threshold_value: integer: hex color value (between 0 and 255) that sparates pixels that will turn into white ones from those
+                that will turn into black ones, the selection of the value of - threshold_value - will affect how the result will look like
+                default value : 202 , for modification, values between 150 and 210 are recommended
+
+                example -> for text images the bigger the value of threshold_value the thicker and more filled the 
+                caracter's will be, the opposite is true
+            """
+        thres,mono_image=threshold(image,threshold_value,253,cv.THRESH_BINARY) #adjusting the threshold
+        return (thres,mono_image)
+    @staticmethod
+    def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,-1]])):
+        """sharpened_img(...)
+                adds a sharpening filter to the image
+            image: image type ( opened using -cv.imread - function )
+
+            we recommend using the default values for the rest of the parameters"""
+        sharp_img=cv.filter2D(image,-1,sharpening_filter)
+        return sharp_img
+    @staticmethod
+    def full_filter(image,resize=0,resize_to_original=False,gray=True,thresholding=True,denoising=True,eroding=True,sharpening=True):
+        """full_filter(...)
+
+                a genral image enhancing method that packs up all the methods in the - Enhance - class
+                with parameters chosen by the developers
+
+                image: image type ( opened using -cv.imread- function)
+                resize_to_original: boolean that activates the resizing to original step
+                ( if resize_to_original is True , the inverse of -resize- will be used as a factor of resizing )
+                resize: integer that replaces the -static- parameter in the resizing step
+                (type : help(dynamic_resize) for more details)
+                gray: boolean that activates the greyscaling step
+                thresholding: boolean that activates the thresholding step
+                denoising: boolean that activates the denoising step
+                eroding: boolean that activates the eroding step
+                sharpening: boolean that activates the sharpening step
+
+        """
+        # adjust the number of pixels if needed
+        image=Enhance.dynamic_resize(image,resize) 
+        # transform into grayscale 
+        if gray:
+            image=Enhance.gray_image_cv(image)  
+        # thresholding the image and turning it into a binary image
+        if thresholding:
+            thres,mono_image=Enhance.thresholded_img(image)
+        # denoising the image
+        if denoising:
+            image=Enhance.noise_reducer_cv(mono_image) 
+        # thinning the caracters
+        if eroding:
+            image=Enhance.thin_font_cv(image) 
+        # sharpening the result
+        if sharpening:
+            image=Enhance.sharpened_img(image)
+        #resizing back
+        if resize_to_original and resize:
+            image=Enhance.dynamic_resize(image,1/resize)
+
+        return image
     
-            a genral image enhancing method that packs up all the methods in the - Enhance - class
-            with parameters chosen by the developers
-                        
-            image: image type ( opened using -cv.imread- function)
-            resize_to_original: boolean that activates the resizing to original step
-            ( if resize_to_original is True , the inverse of -resize- will be used as a factor of resizing )
-            resize: integer that replaces the -static- parameter in the resizing step
-            (type : help(dynamic_resize) for more detail)
-            gray: boolean that activates the greyscaling step
-            thresholding: boolean that activates the thresholding step
-            denoising: boolean that activates the denoising step
-            eroding: boolean that activates the eroding step
-            sharpening: boolean that activates the sharpening step
-            
-    """
-    # adjust the number of pixels if needed
-    image=dynamic_resize(image,resize) 
-    # transform into grayscale 
-    if gray:
-        image=gray_image_cv(image)  
-    # thresholding the image and turning it into a binary image
-    if thresholding:
-        thres,mono_image=thresholded_img(image)
-    # denoising the image
-    if denoising:
-        image=noise_reducer_cv(mono_image) 
-    # thinning the caracters
-    if eroding:
-        image=thin_font_cv(image) 
-    # sharpening the result
-    if sharpening:
-        image=sharpened_img(image)
-    #resizing back
-    if resize_to_original and not resize:
-        image=dynamic_resize(image,1/resize)
-    
-    return image
-    
-    
-         
-
-image=cv.imread('original.jpg') #Uploading the image to the memory
-
-image=full_filter(image)  #Applying the filter 
-
-imwrite('final_result.png',image) 
-
-
-
-
-
 cv.waitKey(0)
