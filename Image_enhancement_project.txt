@@ -153,21 +153,11 @@ def full_filter(image,resize=0,gray=True,thresholding=True,denoising=True,erodin
     
          
 
-image=cv.imread('page_11.jpg') #Uploading the image to the memory
+image=cv.imread('original.jpg') #Uploading the image to the memory
 
-image=dynamic_resize(image) 
+image=full_filter(image)  #Applying the filter 
 
-gray_image=gray_image_cv(image)   
-
-thres,mono_image=thresholded_img(gray_image)
-
-no_noise_image=noise_reducer_cv(mono_image) 
-
-eroded_image=thin_font_cv(no_noise_image) 
-
-final_result=sharpened_img(eroded_image)
-
-imwrite('final_result.png',final_result) 
+imwrite('final_result.png',image) 
 
 
 
