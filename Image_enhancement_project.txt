@@ -116,7 +116,7 @@ def sharpened_img(image,sharpening_filter=np.array([[-1,-1,-1],[-1,9,-1],[-1,-1,
     sharp_img=cv.filter2D(image,-1,sharpening_filter)
     return sharp_img
 
-def full_filter(image,resize=0,gray=True,thresholding=True,denoising=True,eroding=True,sharpening=True):
+def full_filter(image,resize=0,resize_to_original=0,gray=True,thresholding=True,denoising=True,eroding=True,sharpening=True):
     """full_filter(...)
     
             a genral image enhancing method that packs up all the methods in the - Enhance - class
@@ -130,6 +130,8 @@ def full_filter(image,resize=0,gray=True,thresholding=True,denoising=True,erodin
             denoising: boolean that activates the denoising step
             eroding: boolean that activates the eroding step
             sharpening: boolean that activates the sharpening step
+            resize_to_original: boolean/integer that activates the resizing to original step
+            ( if resize_to_original <> 0, it's value will be used as a factor of resizing )
     """
     # adjust the number of pixels if needed
     image=dynamic_resize(image,resize) 
@@ -148,6 +150,10 @@ def full_filter(image,resize=0,gray=True,thresholding=True,denoising=True,erodin
     # sharpening the result
     if sharpening:
         image=sharpened_img(image)
+    #resizing back
+    if resize_to_original and not resize:
+        image=dynamic_resize(image,resize_to_original)
+    
     return image
     
     
