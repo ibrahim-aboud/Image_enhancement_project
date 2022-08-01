@@ -63,7 +63,6 @@ def dynamic_resize(image,static=0,height_portrait=8465,height_landscape=8465):
     """
     height=image.shape[0]
     width=image.shape[1]
-    image=image
     # case of dynamic resize
     if not static:   
         if height>=width:
