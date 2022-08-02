@@ -1,7 +1,6 @@
 from cv2 import imshow
 import numpy as np
 import cv2 as cv
-from PIL import Image
 from cv2 import threshold
 from cv2 import imwrite
 from numpy import uint, uint8
