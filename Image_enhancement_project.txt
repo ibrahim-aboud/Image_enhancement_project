@@ -28,14 +28,14 @@ class Enhance:
     def thin_font_cv(image):
         """thin_font_cv(...)
 
-                uses the OpenCV's - cv.erode - function inorder to make text in an image thinner
+                uses the OpenCV's - cv.erode - function inorder to make text in an image thinner 
                 image: image type ( opened using -cv.imread - function ) 
         """
         import numpy as np
-        image=cv.bitwise_not(image)
-        kernel=np.ones((2,2), np.uint8)
-        image= cv.erode(image,kernel,iterations=1)
-        image=cv.bitwise_not(image)
+        image=cv.bitwise_not(image)        #inverting the image (swapping the colours)
+        kernel=np.ones((2,2), np.uint8)    #managing the number of pixels to be eroded/dilated
+        image= cv.erode(image,kernel,iterations=1) #To make the font thicker (dilation) we just need to replace 'cv.erode' with 'cv.dilate'
+        image=cv.bitwise_not(image)         
         return (image)
     @staticmethod
     def dynamic_resize(image,static=0,height_portrait=8465,height_landscape=8465):
